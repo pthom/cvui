@@ -15,7 +15,7 @@ Features
 
 Build
 -----
-The only dependency is OpenCV (version 3.0), which you are probably already using. Just add `cvui.h` and `cvui.cpp` to your project and you are ready to go.
+The only dependency is OpenCV (version 2.xx and 3.0), which you are probably already using. Just add `cvui.h` and `cvui.cpp` to your project and you are ready to go.
 
 Usage
 -----
@@ -23,11 +23,9 @@ Check the [examples](https://github.com/Dovyski/cvui/tree/master/example) folder
 
 ```c++
 #include <iostream>
-
-#include "opencv2/core/core.hpp"
-#include "opencv2/highgui/highgui.hpp"
-
-#define WINDOW_NAME		"CVUI Test"
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include "cvui.h"
 
 int main(int argc, const char *argv[])
 {
@@ -35,7 +33,14 @@ int main(int argc, const char *argv[])
 	bool checked = false;
 	int count = 0;
 
-	cvui::init(WINDOW_NAME);
+	cvui::init("CVUI Test");
+
+	// optional user defined mouse callback (can be a lambda or std::function)
+	cvui::MouseCallback mouseCallback = [&](int event, int x, int y, int flags, void * data) -> bool{
+		std::cout << "Mouse callback at	" << x << ", " << y << std::endl;
+		return false;
+	};
+	cvui::setMouseCallback(&mouseCallback);
 
 	while (true) {
 		frame = cv::Scalar(49, 52, 49);
@@ -51,17 +56,15 @@ int main(int argc, const char *argv[])
 		cvui::counter(frame, 200, 100, &count);
 		cvui::checkbox(frame, 200, 150, "Checkbox", &checked);
 
+		if (cvui::button(frame, 500, 50, "&Quit")) {
+			break;
+		}
+
 		cvui::imshow(frame);
-
-        // Check if ESC key was pressed
-        if (cvui::lastKeyPressed() == 27) {
-            break;
-        }
-
 	}
-
 	return 0;
 }
+
 ```
 
 License
