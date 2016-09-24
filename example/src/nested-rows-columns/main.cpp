@@ -114,10 +114,8 @@ int main(int argc, const char *argv[])
 		
 		// This function must be called *AFTER* all UI components. It does
 		// all the behind the scenes magic to handle mouse clicks, etc.
-		cvui::update();
-
-		// Show everything on the screen
-		cv::imshow(WINDOW_NAME, frame);
+		// It also shows the image on the screen (cv::imshow)
+		cvui::imshow(frame);
 
 		// Check if ESC key was pressed
 		if (cvui::lastKeyPressed() == 27) {

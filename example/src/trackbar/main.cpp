@@ -108,9 +108,7 @@ int main(int argc, const char *argv[])
 				break;
 		cvui::endColumn();
 
-
-		cvui::update();
-		cv::imshow(WINDOW_NAME, frame);
+		cvui::imshow(frame);
 	}
 
 	return 0;

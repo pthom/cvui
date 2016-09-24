@@ -757,13 +757,26 @@ void sparkline(std::vector<double>& theValues, int theWidth, int theHeight, unsi
 
 
 
+
 /**
- Updates the library internal things. You need to call this function **AFTER** you are done adding/manipulating
+ imshow : Updates the library internal things, and shows the image + gui (cv::imshow())
+ You need to call this function **AFTER** you are done adding/manipulating
  UI elements in order for them to react to mouse interactions.
+ With this version, and simple call to cvui::imshow(image) will update the gui and show the
+ image on the screen
+*/
+void imshow(const cv::Mat &theImage);
+
+/**
+ Updates the library internal things.
+ You need to call this function **AFTER** you are done adding/manipulating
+ UI elements in order for them to react to mouse interactions.
+ With this version, you need to call cv::imshow() before calling cvui::update()
 */
 void update();
 
-// Internally used to handle mouse events
+
+	// Internally used to handle mouse events
 void handleMouse(int theEvent, int theX, int theY, int theFlags, void* theData);
 
 #ifdef __GNUC__

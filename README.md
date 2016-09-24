@@ -51,10 +51,8 @@ int main(int argc, const char *argv[])
 		cvui::counter(frame, 200, 100, &count);
 		cvui::checkbox(frame, 200, 150, "Checkbox", &checked);
 
-		cvui::update();
+		cvui::imshow(frame);
 
-		cv::imshow(WINDOW_NAME, frame);
-		
         // Check if ESC key was pressed
         if (cvui::lastKeyPressed() == 27) {
             break;
