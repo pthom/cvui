@@ -39,6 +39,7 @@ static char gBuffer[1024];
 static int gLastKeyPressed;
 static int gDelayWaitKey;
 static cv::String gTheWindowName;
+static MouseCallback * gTheMouseCallback = nullptr;
 
 cvui_block_t gScreen;
 
@@ -685,7 +686,13 @@ void init(const cv::String& theWindowName, int theDelayWaitKey) {
 	//TODO: init gScreen here?
 }
 
-int lastKeyPressed() {
+void setMouseCallback( MouseCallback * theMouseCallback )
+{
+	gTheMouseCallback = theMouseCallback;
+}
+
+
+	int lastKeyPressed() {
 	return gLastKeyPressed;
 }
 
@@ -887,6 +894,11 @@ void imshow(const cv::Mat & theImage)
 }
 
 void handleMouse(int theEvent, int theX, int theY, int theFlags, void* theData) {
+	if (gTheMouseCallback) {
+		bool wasEventEaten = (*gTheMouseCallback)(theEvent, theX, theY, theFlags, theData);
+		if (wasEventEaten)
+			return;
+	}
 	gMouse.x = theX;
 	gMouse.y = theY;
 
@@ -897,6 +909,7 @@ void handleMouse(int theEvent, int theX, int theY, int theFlags, void* theData) 
 		gMouseJustReleased = true;
 		gMousePressed = false;
 	}
+
 }
 
 

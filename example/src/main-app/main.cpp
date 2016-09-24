@@ -120,6 +120,22 @@ int main(int argc, const char *argv[])
 
 		cvui::endRow();
 
+		// Handle mouse callbacks:
+		// first, define a mouse callback on the window, then call cvui::setMouseCallback.
+		// Your function should return false most of the time, and return true
+		// only if you consider that the even was handled (eaten) by your code
+		// and should not be processed by cvui.
+		int xMouse, yMouse, flagsMouse, eventMouse;
+		cvui::MouseCallback mouseCallback = [&](int event, int x, int y, int flags, void * data) -> bool {
+			xMouse = x; yMouse = y; flagsMouse = flags; eventMouse = event;
+			return false;
+		};
+		cvui::setMouseCallback(&mouseCallback);
+		std::stringstream mouseInfo;
+		mouseInfo << "Mouse : " << xMouse << "," << yMouse << ", event:" << eventMouse << " flags;" << flagsMouse;
+		cvui::text(frame, 200, 3, mouseInfo.str());
+
+
 		// Display the lib version at the bottom of the screen
 		cvui::printf(frame, frame.cols - 80, frame.rows - 20, 0.4, 0xCECECE, "cvui v.%s", cvui::VERSION);
 

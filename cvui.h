@@ -12,6 +12,7 @@
 
 #include <opencv2/core/core.hpp>
 #include <stdarg.h>
+#include <functional>
 
 namespace cvui
 {
@@ -32,6 +33,23 @@ void init(const cv::String& theWindowName, int theDelayWaitKey = 15);
  Note : you can set the delay of cv::waitKey during cvui::init()
  */
 int lastKeyPressed();
+
+/**
+ * setMouseCallback : define a mouse callback on the window
+ * Your function should return false most of the time,
+ * and return true only if you consider that the event
+ * was handled (eaten) by your code and should not be processed by cvui.
+ * You function can be a  raw function, or any std::function (i.e including lambda functions)
+ * as opposed to cv::setMouseCallback which accepts only raw functions pointers.
+ * Example:
+ *	cvui::MouseCallback mouseCallback = [](int event, int x, int y, int flags, void * data) -> bool {
+ *		// handle callback, then return false or true
+ *		return false;
+ *	};
+ *	cvui::setMouseCallback(&mouseCallback);
+ */
+typedef std::function< bool(int theEvent, int theX, int theY, int theFlags, void* theData)> MouseCallback;
+void setMouseCallback( MouseCallback * theMouseCallback );
 
 
 /**
@@ -775,8 +793,9 @@ void imshow(const cv::Mat &theImage);
 */
 void update();
 
+//
 
-	// Internally used to handle mouse events
+// Internally used to handle mouse events
 void handleMouse(int theEvent, int theX, int theY, int theFlags, void* theData);
 
 #ifdef __GNUC__

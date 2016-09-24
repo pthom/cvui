@@ -15,11 +15,30 @@ Licensed under the MIT license.
 
 #define WINDOW_NAME		"CVUI Test"
 
+int clamp(int min, int max, int value)
+{
+	if (value < min) return min;
+	else if (value > max) return max;
+	else return value;
+}
+
 int main(int argc, const char *argv[])
 {
 	cv::Mat frame_orig = cv::imread("lena.jpg");
 	cv::Mat frame = frame_orig.clone();
 	cv::Mat doubleBuffer = frame.clone();
+
+	static double zoomFactor = 12;
+	const int zoomHalfSize = 5;
+	cv::Rect zoomRoi(0, 0, zoomHalfSize * 2, zoomHalfSize * 2);
+	// Mouse callback example : change zoomed portion region of interest (roi)
+	cvui::MouseCallback mouseCallback = [&](int event, int x, int y, int flags, void* data) -> bool {
+		zoomRoi.x = clamp(0, frame.cols - 2 * zoomHalfSize - 2, x - zoomHalfSize);
+		zoomRoi.y = clamp(0, frame.rows - 2 * zoomHalfSize - 2, y - zoomHalfSize);
+		zoomRoi.width = zoomRoi.height = 2 * zoomHalfSize + 1;
+		return false;
+	};
+	cvui::setMouseCallback(&mouseCallback);
 
 	// Init cvui : this will create a named window (cv::namedWindow), and init cvui
 	cvui::init(WINDOW_NAME);
@@ -54,7 +73,7 @@ int main(int argc, const char *argv[])
 		// Window components are useful to create HUDs and similars. At the
 		// moment, there is no implementation to constraint content within a
 		// a window.
-		cvui::window(frame, 20, 50, 180, 220, "RGB adjust");
+		cvui::window(frame, 20, 0, 180, 208, "RGB adjust");
 
 		// In a columns, all added elements are
 		// vertically placed, one under the other (from top to bottom)
@@ -66,7 +85,7 @@ int main(int argc, const char *argv[])
 		// DO NOT have (x,y) coordinates.
 		//
 		// Let's create a row at position (35,80) with automatic width and height, and a padding of 10
-		cvui::beginColumn(frame, 35, 80, -1, -1, 10);
+		cvui::beginColumn(frame, 35, 30, -1, -1, 10);
 			static double rgb[3] {1., 1., 1};
 			bool rgbModified = false;
 			// Trackbar accept a pointer to a variable that controls their value
@@ -89,8 +108,8 @@ int main(int argc, const char *argv[])
 		cvui::endColumn();
 
 		// HSV
-		cvui::window(frame, frame_orig.cols - 180, 50, 180, 220, "HSV adjust");
-		cvui::beginColumn(frame, frame_orig.cols - 180, 80, -1, -1, 10);
+		cvui::window(frame, frame_orig.cols - 180, 0, 180, 208, "HSV adjust");
+		cvui::beginColumn(frame, frame_orig.cols - 180, 30, -1, -1, 10);
 			static double hsv[3] {1., 1., 1};
 			bool hsvModified = false;
 			if (cvui::trackbar(&hsv[0], colorTrackbarParams))
@@ -112,6 +131,15 @@ int main(int argc, const char *argv[])
 				cv::cvtColor(hsvMat, doubleBuffer, cv::COLOR_HSV2BGR);
 			}
 		cvui::endColumn();
+
+		// Display zoomed portion
+		{
+			cv::Mat zoomedPortion;
+			cv::resize(frame(zoomRoi), zoomedPortion, cv::Size(), zoomFactor, zoomFactor, cv::INTER_CUBIC);
+			cv::Rect zoomLocation(cv::Point(5, frame.rows - zoomedPortion.size().height - 3), zoomedPortion.size());
+			zoomedPortion.copyTo( frame(zoomLocation) );
+			cv::rectangle(frame, zoomLocation, cv::Scalar(100, 100, 100), 2);
+		}
 
 		// Display the lib version at the bottom of the screen
 		cvui::printf(frame, frame.cols - 300, frame.rows - 20, 0.4, 0xCECECE, "cvui v.%s", cvui::VERSION);
