@@ -23,7 +23,7 @@ int main(int argc, const char *argv[])
 {
 	cv::Mat frame = cv::Mat(cv::Size(250, 750), CV_8UC3);
 
-	cv::namedWindow(WINDOW_NAME);
+	// Init cvui : this will create a named window (cv::namedWindow), and init cvui
 	cvui::init(WINDOW_NAME);
 
 

@@ -35,7 +35,6 @@ int main(int argc, const char *argv[])
 	bool checked = false;
 	int count = 0;
 
-	cv::namedWindow(WINDOW_NAME);
 	cvui::init(WINDOW_NAME);
 
 	while (true) {

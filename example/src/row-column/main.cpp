@@ -45,10 +45,7 @@ int main(int argc, const char *argv[])
 		values.push_back(rand() + 0.);
 	}
 
-	// Init a OpenCV window and tell cvui to use it.
-	// If cv::namedWindow() is not used, mouse events will
-	// not be captured by cvui.
-	cv::namedWindow(WINDOW_NAME);
+	// Init cvui : this will create a named window (cv::namedWindow), and init cvui
 	cvui::init(WINDOW_NAME);
 
 	while (true) {

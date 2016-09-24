@@ -675,6 +675,7 @@ namespace render {
 }
 
 void init(const cv::String& theWindowName, int theDelayWaitKey) {
+	cv::namedWindow(theWindowName);
 	cv::setMouseCallback(theWindowName, handleMouse, NULL);
 	gDelayWaitKey = theDelayWaitKey;
 	gLastKeyPressed = 0;
